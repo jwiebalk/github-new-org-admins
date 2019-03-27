@@ -10,7 +10,6 @@
   "dependencies": {
     "github-webhook-handler": "*",
     "http": "*",
-    "prettyjson": "*",
-    "colors": "*"
+    "@octokit/rest": "*"
   }
 }

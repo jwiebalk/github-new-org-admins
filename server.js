@@ -1,13 +1,6 @@
 var http = require('http')
 var createHandler = require('github-webhook-handler')
-var handler = createHandler({ path: '/webhook', secret: "mysecret"})
-var prettyjson = require('prettyjson')
-var colors = require('colors')
-
-var options = {
-    stringColor: 'white',
-    keysColor: 'magenta'
-}
+var handler = createHandler({ path: '/webhook', secret: (process.env.SECRET)})
 
 http.createServer(function (req, res) {
   handler(req, res, function (err) {
@@ -23,12 +16,16 @@ handler.on('error', function (err) {
 
 handler.on('organization', function (event) {
   if(event.payload.action == "created") {
-  console.log('Received an organization event for %s from %s',
-    event.payload.organization.login,
-    event.payload.sender.login)
+    addAdmins(event.payload.organization.login, event.payload.sender.login)
   }
 })
 
 // handler.on('*', function (emitData) {
 //   console.log(prettyjson.render(emitData, options))
 //  })
+
+function addAdmins(org, creator)
+{
+  console.log('Received an organization event for %s from %s',
+    org, creator)
+}
