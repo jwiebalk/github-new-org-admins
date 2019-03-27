@@ -20,21 +20,15 @@ http.createServer(function (req, res) {
 handler.on('error', function (err) {
   console.error('Error:', err.message)
 })
-/*
-    handler.on('push', function (event) {
-      console.log('Received a push event for %s to %s',
-        event.payload.repository.name,
-        event.payload.ref)
-    })
 
-    handler.on('issues', function (event) {
-      console.log('Received an issue event for %s action=%s: #%d %s',
-        event.payload.repository.name,
-        event.payload.action,
-        event.payload.issue.number,
-        event.payload.issue.title)
-    })'%j',
-*/
-handler.on('*', function (emitData) {
-  console.log(prettyjson.render(emitData, options))
- })
+handler.on('organization', function (event) {
+  if(event.payload.action == "created") {
+  console.log('Received an organization event for %s from %s',
+    event.payload.organization.login,
+    event.payload.sender.login)
+  }
+})
+
+// handler.on('*', function (emitData) {
+//   console.log(prettyjson.render(emitData, options))
+//  })
