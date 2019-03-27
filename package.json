@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "github-webhook-handler": "*",
-    "http": "*",
-    "@octokit/rest": "*"
+    "http": "*"
   }
 }
