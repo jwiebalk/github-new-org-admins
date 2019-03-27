@@ -1,6 +1,6 @@
-# GitHub Webhook handler in Docker
+# GitHub Enterprise Server new Organization admins
 
-Basic Nodejs webserver to listen for GitHub Webhook requests
+Nodejs app that listens for Organization.create webhooks from a GitHub Enterprise Server and adds a specified list of users as owners.
 
 
 ## Prerequisites
@@ -12,8 +12,8 @@ Basic Nodejs webserver to listen for GitHub Webhook requests
 Rather than build it yourself, the full container is available on [DockerHub](https://hub.docker.com/r/jwiebalk/github-webhook-handler-docker/)
 
 ```
-sudo docker pull jwiebalk/github-webhook-handler-docker
-sudo docker run -d -p 7777:7777 -e SECRET=$SHARED_SECRET -t jwiebalk/github-webhook-handler-docker
+sudo docker pull jwiebalk/github-new-org-admins
+sudo docker run -d -p 3000:3000 -e SECRET=$SHARED_SECRET -t jwiebalk/github-new-org-admins
 ```
 
 You can then check the `docker logs $container` to see webhook status
@@ -23,8 +23,8 @@ You can then check the `docker logs $container` to see webhook status
 Build the image locally
 
 ```
-git clone https://github.com/jwiebalk/github-webhook-handler-docker.git
-cd github-webhook-handler-docker
-sudo docker build --rm=true -t github-webhook-handler-docker .
+git clone https://github.com/jwiebalk/github-new-org-admins.git
+cd github-new-org-admins
+sudo docker build --rm=true -t github-new-org-admins .
 ```
 
