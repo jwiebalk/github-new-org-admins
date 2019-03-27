@@ -1,7 +1,12 @@
 var http = require('http')
 var createHandler = require('github-webhook-handler')
 var handler = createHandler({ path: '/webhook', secret: (process.env.SECRET)})
+
+var adminArray = ['admin1','admin2']
+
 var impersonationToken = ""
+var org = ""
+var creator = ""
 
 http.createServer(function (req, res) {
   handler(req, res, function (err) {
@@ -17,17 +22,11 @@ handler.on('error', function (err) {
 
 handler.on('organization', function (event) {
   if(event.payload.action == "created") {
-    addAdmins(event.payload.organization.login, event.payload.sender.login)
+    org = event.payload.organization.login
+    creator = event.payload.sender.login
+    getImpersonation(creator)
   }
 })
-
-function addAdmins(org, creator)
-{
-  console.log('Received an organization event for %s from %s',
-    org, creator)
-  getImpersonation(creator)
-
-}
 
 function getImpersonation(creator)
 {
@@ -56,7 +55,8 @@ const req = https.request(options, (res) => {
       }).on('end', () => {
         body = Buffer.concat(body).toString();
   // at this point, `body` has the entire request body stored in it as a string
-    parseJSON(body)
+      impersonationToken = JSON.parse(body).token
+        adminLoop()
     })
 
 })
@@ -70,6 +70,46 @@ req.end()
 
 }
 
-function parseJSON(body) {
-  impersonationToken = JSON.parse(body).token
+function adminLoop()
+{
+  adminArray.forEach(function(adminUser){
+      addAdminsToNewOrg(impersonationToken, org, adminUser)
+})
+
+}
+
+
+function addAdminsToNewOrg(impersonationToken, org, adminUser)
+{
+  console.log(org, adminUser)
+
+  const https = require('https')
+  const data = JSON.stringify({
+    role: "admin"
+  })
+
+  const options = {
+    hostname: (process.env.GHE_HOST),
+    port: 443,
+    path: '/api/v3/orgs/' + org + "/memberships/"  + adminUser,
+    method: 'PUT',
+    headers: {
+      'Authorization': 'token ' + impersonationToken,
+      'Content-Type': 'application/json',
+      'Content-Length': data.length
+    }
+  }
+  let body = [];
+  const req = https.request(options, (res) => {
+    console.log(`statusCode: ${res.statusCode}`)
+
+  })
+
+  req.on('error', (error) => {
+    console.error(error)
+  })
+
+   req.write(data)
+  req.end()
+
 }
