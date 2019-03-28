@@ -27,7 +27,6 @@ export GHE_TOKEN=<site admin token>
 
 ```
 sudo docker run -d -p 3000:3000 -e GHE_HOST=$GHE_HOST -e GHE_TOKEN=$GHE_TOKEN -e SHARED_SECRET=$SHARED_SECRET -t github-new-org-admins
-
 ```
 
 You can then check the `docker logs $container` to see webhook status
