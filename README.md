@@ -5,6 +5,8 @@ Nodejs app that listens for `Organization.create` webhooks from a GitHub Enterpr
 
 ## Build the image
 
+* Add admins to defined array at https://github.com/jwiebalk/github-new-org-admins/blob/master/server.js#L5
+
 * Build the image locally
 
 ```
