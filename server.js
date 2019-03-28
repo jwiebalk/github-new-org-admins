@@ -1,8 +1,8 @@
 var http = require('http')
 var createHandler = require('github-webhook-handler')
-var handler = createHandler({ path: '/webhook', secret: (process.env.SECRET)})
+var handler = createHandler({ path: '/webhook', secret: (process.env.SHARED_SECRET)})
 
-var adminArray = ['jwiebalk','baymax']
+var adminArray = ['admin1','admin2']
 
 var impersonationToken = ""
 var org = ""
