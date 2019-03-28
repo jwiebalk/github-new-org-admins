@@ -1,6 +1,6 @@
-# GitHub Enterprise Server new Organization admins
+# Auto add site-admins to new Organization
 
-Nodejs app that listens for Organization.create webhooks from a GitHub Enterprise Server and adds a specified list of users as owners.
+Nodejs app that listens for `Organization.create` webhooks from a GitHub Enterprise Server and adds a specified list of users as owners.
 
 
 ## Build the image
