@@ -2,11 +2,12 @@ var http = require('http')
 var createHandler = require('github-webhook-handler')
 var handler = createHandler({ path: '/webhook', secret: (process.env.SECRET)})
 
-var adminArray = ['admin1','admin2']
+var adminArray = ['jwiebalk','baymax']
 
 var impersonationToken = ""
 var org = ""
 var creator = ""
+
 
 http.createServer(function (req, res) {
   handler(req, res, function (err) {
@@ -24,6 +25,7 @@ handler.on('organization', function (event) {
   if(event.payload.action == "created") {
     org = event.payload.organization.login
     creator = event.payload.sender.login
+    console.log("Received webhook for new %s Organization", org)
     getImpersonation(creator)
   }
 })
@@ -49,16 +51,13 @@ const options = {
 }
 let body = [];
 const req = https.request(options, (res) => {
-  console.log(`statusCode: ${res.statusCode}`)
   res.on('data', (chunk) => {
         body.push(chunk);
       }).on('end', () => {
         body = Buffer.concat(body).toString();
-  // at this point, `body` has the entire request body stored in it as a string
       impersonationToken = JSON.parse(body).token
         adminLoop()
     })
-
 })
 
 req.on('error', (error) => {
@@ -76,12 +75,12 @@ function adminLoop()
       addAdminsToNewOrg(impersonationToken, org, adminUser)
 })
 
-}
+  deleteImpersonationToken(creator)
 
+}
 
 function addAdminsToNewOrg(impersonationToken, org, adminUser)
 {
-  console.log(org, adminUser)
 
   const https = require('https')
   const data = JSON.stringify({
@@ -101,7 +100,7 @@ function addAdminsToNewOrg(impersonationToken, org, adminUser)
   }
   let body = [];
   const req = https.request(options, (res) => {
-    console.log(`statusCode: ${res.statusCode}`)
+    console.log("Added %s to %s", adminUser, org)
 
   })
 
@@ -111,5 +110,30 @@ function addAdminsToNewOrg(impersonationToken, org, adminUser)
 
    req.write(data)
   req.end()
+}
 
+function deleteImpersonationToken(creator)
+{
+  const https = require('https')
+
+  const options = {
+    hostname: (process.env.GHE_HOST),
+    port: 443,
+    path: '/api/v3/admin/users/' + creator + "/authorizations",
+    method: 'DELETE',
+    headers: {
+      'Authorization': 'token ' + (process.env.GHE_TOKEN),
+      'Content-Type': 'application/json',
+    }
+  }
+  let body = [];
+  const req = https.request(options, (res) => {
+    // console.log(`DELETE statusCode: ${res.statusCode}`)
+  })
+
+  req.on('error', (error) => {
+    console.error(error)
+  })
+
+  req.end()
 }
