@@ -85,7 +85,7 @@ function adminLoop()
     addUsersToNewOrg(impersonationToken, org, user, admin)
   })
 
-  deleteImpersonationToken(creator)
+//  deleteImpersonationToken(creator)
 
 }
 
@@ -123,6 +123,8 @@ function addUsersToNewOrg(impersonationToken, org, user, admin)
         res.on('data', function (chunk) {
           console.log('BODY: ' + chunk)
           });
+          // console.log(impersonationToken, org, user, admin)
+          // addUsersToNewOrg(impersonationToken, org, user, admin)
     } else {
           console.log("Added %s to %s", user, org)
     }
