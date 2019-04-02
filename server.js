@@ -3,6 +3,7 @@ var createHandler = require('github-webhook-handler')
 var handler = createHandler({ path: '/webhook', secret: (process.env.SHARED_SECRET)})
 
 var adminArray = ['admin1','admin2']
+var userArray = ['user1']
 
 var impersonationToken = ""
 var org = ""
@@ -74,26 +75,39 @@ req.end()
 
 function adminLoop()
 {
-  adminArray.forEach(function(adminUser){
-      addAdminsToNewOrg(impersonationToken, org, adminUser)
+    var admin = 1
+    adminArray.forEach(function(adminUser){
+      addUsersToNewOrg(impersonationToken, org, adminUser, admin)
 })
+
+  userArray.forEach(function(user){
+    admin = 0
+    addUsersToNewOrg(impersonationToken, org, user, admin)
+  })
 
   deleteImpersonationToken(creator)
 
 }
 
-function addAdminsToNewOrg(impersonationToken, org, adminUser)
+function addUsersToNewOrg(impersonationToken, org, user, admin)
 {
 
+  var data = ""
   const https = require('https')
-  const data = JSON.stringify({
-    role: "admin"
-  })
+  if (admin == 1) {
+     data = JSON.stringify({
+      role: "admin"
+    })
+  } else (
+     data = JSON.stringify({
+      role: "member"
+    })
+  )
 
   const options = {
     hostname: (process.env.GHE_HOST),
     port: 443,
-    path: '/api/v3/orgs/' + org + "/memberships/"  + adminUser,
+    path: '/api/v3/orgs/' + org + "/memberships/"  + user,
     method: 'PUT',
     headers: {
       'Authorization': 'token ' + impersonationToken,
@@ -104,10 +118,13 @@ function addAdminsToNewOrg(impersonationToken, org, adminUser)
   let body = [];
   const req = https.request(options, (res) => {
     if (res.statusCode != 200) {
-          console.log("Status code: %s", res.statusCode)
-          console.log("Adding %s to %s failed", adminUser, org)
+        console.log("Status code: %s", res.statusCode)
+        console.log("Adding %s to %s failed", user, org)
+        res.on('data', function (chunk) {
+          console.log('BODY: ' + chunk)
+          });
     } else {
-          console.log("Added %s to %s", adminUser, org)
+          console.log("Added %s to %s", user, org)
     }
 
   })
