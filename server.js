@@ -56,6 +56,9 @@ const req = https.request(options, (res) => {
       }).on('end', () => {
         body = Buffer.concat(body).toString();
       impersonationToken = JSON.parse(body).token
+      if( impersonationToken === null || impersonationToken === "null" || impersonationToken.length < 1 ) {
+        console.log("impersonationToken failed")
+      }
         adminLoop()
     })
 })
@@ -100,7 +103,12 @@ function addAdminsToNewOrg(impersonationToken, org, adminUser)
   }
   let body = [];
   const req = https.request(options, (res) => {
-    console.log("Added %s to %s", adminUser, org)
+    if (res.statusCode != 200) {
+          console.log("Status code: %s", res.statusCode)
+          console.log("Adding %s to %s failed", adminUser, org)
+    } else {
+          console.log("Added %s to %s", adminUser, org)
+    }
 
   })
 
