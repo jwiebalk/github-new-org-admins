@@ -1,5 +1,6 @@
 var http = require('http')
 var createHandler = require('github-webhook-handler')
+
 var handler = createHandler({ path: '/webhook', secret: (process.env.SHARED_SECRET)})
 
 var adminArray = ['admin1','admin2']
@@ -61,6 +62,7 @@ const req = https.request(options, (res) => {
         console.log("impersonationToken failed")
       }
         adminLoop()
+
     })
 })
 
@@ -73,19 +75,19 @@ req.end()
 
 }
 
+
 function adminLoop()
 {
     var admin = 1
     adminArray.forEach(function(adminUser){
-      addUsersToNewOrg(impersonationToken, org, adminUser, admin)
+    addUsersToNewOrg(impersonationToken, org, adminUser, admin)
 })
-
   userArray.forEach(function(user){
     admin = 0
     addUsersToNewOrg(impersonationToken, org, user, admin)
   })
 
-//  deleteImpersonationToken(creator)
+  setTimeout(deleteImpersonationToken, 3000);
 
 }
 
@@ -123,8 +125,6 @@ function addUsersToNewOrg(impersonationToken, org, user, admin)
         res.on('data', function (chunk) {
           console.log('BODY: ' + chunk)
           });
-          // console.log(impersonationToken, org, user, admin)
-          // addUsersToNewOrg(impersonationToken, org, user, admin)
     } else {
           console.log("Added %s to %s", user, org)
     }
@@ -139,8 +139,9 @@ function addUsersToNewOrg(impersonationToken, org, user, admin)
   req.end()
 }
 
-function deleteImpersonationToken(creator)
+function deleteImpersonationToken()
 {
+  console.log("Deleting impersonation token for %s", creator)
   const https = require('https')
 
   const options = {
@@ -155,7 +156,6 @@ function deleteImpersonationToken(creator)
   }
   let body = [];
   const req = https.request(options, (res) => {
-    // console.log(`DELETE statusCode: ${res.statusCode}`)
   })
 
   req.on('error', (error) => {
