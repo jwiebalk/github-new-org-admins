@@ -1,11 +1,15 @@
 {
   "name": "github-new-org-admins",
   "version": "1.0.0",
-  "description": "Node.js on Docker",
+  "description": "Add Admins to new Organization",
   "author": "John Wiebalk <jwiebalk@github.com>",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jwiebalk/github-new-org-admins.git"
   },
   "dependencies": {
     "github-webhook-handler": "*",
