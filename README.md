@@ -18,7 +18,7 @@ sudo docker build --rm=true -t github-new-org-admins .
 * Export needed environment variables
 
 ```
-export SHARED_SECRET=<webhook secret>
+export SECRET=<webhook secret>
 export GHE_HOST=<hostname>
 export GHE_TOKEN=<site admin token>
 ```
