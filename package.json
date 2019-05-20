@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "github-webhook-handler": "*",
-    "http": "*",
-    "stringify-object": "*"
+    "http": "*"
   }
 }

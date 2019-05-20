@@ -43,7 +43,7 @@ function getImpersonation(creator)
 
 const https = require('https')
 const data = JSON.stringify({
-  scopes: ["admin:org"]
+  scopes: ["admin:org", "admin:org_hook"]
 })
 
 const options = {
@@ -93,9 +93,9 @@ function adminLoop()
     addUsersToNewOrg(impersonationToken, org, user, admin)
   })
 
-  createTeamInOrg(org)
-  createWebhookInOrg(org)
 
+  createWebhookInOrg(org)
+  createTeamInOrg(org)
   setTimeout(deleteImpersonationToken, 3000);
 
 }
@@ -190,9 +190,9 @@ function createTeamInOrg(org) {
 }
 function createWebhookInOrg(org) {
   const https = require('https')
-  var webhookConfig = ["url": repohookURL, "content_type": "json", "secret": process.env.SHARED_SECRET]
-  var webhookData = {name: "web", events:"CreateEvent", config: webhookConfig}
-}
+  var webhookConfig = {url: repohookURL,content_type: "json",secret: process.env.SHARED_SECRET }
+  var webhookData = {name: "web", events:"repository", config: webhookConfig}
+
   const data = JSON.stringify(webhookData)
 
   console.log(data)
@@ -210,7 +210,7 @@ function createWebhookInOrg(org) {
   }
   let body = [];
   const req = https.request(options, (res) => {
-    if (res.statusCode != 200) {
+    if (res.statusCode != 201) {
         console.log("Status code: %s", res.statusCode)
         console.log("Adding webhook to %s failed", org)
         res.on('data', function (chunk) {
