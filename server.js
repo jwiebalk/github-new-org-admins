@@ -10,7 +10,7 @@ var team_name = "robots"
 var team_description = "Team of Robots"
 var team_privacy = "closed" // closed (visibile) / secret (hidden) are options here
 
-var repohookURL = "https://ec2-3-18-247-42.us-east-2.compute.amazonaws.com:3000/webhook"
+var repohookURL = process.env.GHES_REPO_HOOK_LISTENER
 
 var impersonationToken = ""
 var org = ""
